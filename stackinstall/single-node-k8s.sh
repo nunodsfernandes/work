@@ -13,7 +13,7 @@ modprobe br_netfilter
 
 # Disable swap and comment it out on fstab
 swapoff -a
-sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+ sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
 
 # Create proper hosts file for the aliases
@@ -48,7 +48,7 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
 EOF
 
 curl -fsSL https://get.docker.com/ | sh
-sudo usermod -aG docker $(whoami)
+usermod -aG docker $(whoami)
 systemctl start docker kubelet && systemctl enable docker kubelet
 
 yum update -y && yum upgrade && yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
