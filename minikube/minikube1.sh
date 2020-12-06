@@ -53,6 +53,6 @@ echo ""
 echo ""
 echo "Part 1 of the setup is finished. Please logout and log back in to re-evaluate Docker user permissions.."
 echo "After you log back in, please run part 2 of the script using the following command:"
-echo "curl -fsSL https://raw.githubusercontent.com/NunoDSFernandes/NxAutomation/master/Scripts/Minikube_2.sh | sh"
+echo "curl -fsSL https://raw.githubusercontent.com/nunodsfernandes/work/master/minikube/minikube2.sh | sh"
 echo ""
 exit
