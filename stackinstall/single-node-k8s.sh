@@ -49,9 +49,11 @@ EOF
 
 curl -fsSL https://get.docker.com/ | sh
 usermod -aG docker $(whoami)
-systemctl start docker kubelet && systemctl enable docker kubelet
+systemctl start docker && systemctl enable docker
 
  yum update -y && yum upgrade && yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+
+systemctl start kubelet && systemctl enable kubelet
 
  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
  chmod 700 get_helm.sh
