@@ -47,6 +47,14 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
         https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 EOF
 
+
+# REMOVED FOR Docker CE TESTS - Standard Docker Install
+#  curl -fsSL https://get.docker.com/ | sh
+#  usermod -aG docker $(whoami)
+#  systemctl start docker kubelet && systemctl enable docker kubelet
+#  systemctl start docker && systemctl enable docker
+
+
 # (Install Docker CE)
 sudo yum install -y yum-utils device-mapper-persistent-data lvm2
 
