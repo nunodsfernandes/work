@@ -47,21 +47,44 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
         https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 EOF
 
-curl -fsSL https://get.docker.com/ | sh
-usermod -aG docker $(whoami)
-systemctl start docker && systemctl enable docker
+# (Install Docker CE)
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
 
- yum update -y && yum upgrade && yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+# Add the Docker repository
+sudo yum-config-manager --add-repo \
+  https://download.docker.com/linux/centos/docker-ce.repo
+  
+# Install Docker CE
+sudo yum update -y && sudo yum install -y \
+  containerd.io-1.2.13 \
+  docker-ce-19.03.11 \
+  docker-ce-cli-19.03.11
+  
+## Create /etc/docker
+sudo mkdir /etc/docker
 
-systemctl start kubelet && systemctl enable kubelet
+# Set up the Docker daemon
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2",
+  "storage-opts": [
+    "overlay2.override_kernel_check=true"
+  ]
+}
+EOF
 
- curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
- chmod 700 get_helm.sh
- ./get_helm.sh
- helm repo add bitnami https://charts.bitnami.com/bitnami
- helm repo add couchdb https://apache.github.io/couchdb-helm
- helm repo update
+# Create /etc/systemd/system/docker.service.d
+sudo mkdir -p /etc/systemd/system/docker.service.d
 
+# Restart Docker
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+sudo systemctl enable docker
 
 # Pre-pull the images for kubeadm and init the cluster
  kubeadm config images pull
