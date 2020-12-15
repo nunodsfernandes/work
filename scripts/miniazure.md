@@ -1,4 +1,4 @@
-Create files n the VM with the following:
+Create files on the VM with the following:
 
 ```
 $ vi minikube1.sh
@@ -61,40 +61,14 @@ sudo rm ~/.kube/config_fix
 ```
 
 
-### Run the first file with:
-```
-$ sudo chmod +x minikube1.sh && ./minikube1.sh
-```
+-------
 
-Restart session
-
-### Run the second file with:
-
-```
-$ sudo chmod +x minikube2.sh && ./minikube2.sh
-```
-
-
-### Configure AWS
-```
-$ aws configure
-```
-
-### Authenticate to ECR and download images with:
-
-```
-aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 160256247964.dkr.ecr.us-east-2.amazonaws.com
-```
-
-
-
-Create third file with:
 
 ```
 $ vi minikube3.sh
 ```
 
-Add: 
+Contents: 
 
 ```
 docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/eo-core:1.0.3
@@ -138,6 +112,35 @@ echo "Refer to the SaaS Ops GitHub page for further instructions!"
 echo ""
 echo "Thank you."
 echo ""
+```
+
+
+***
+
+
+
+### Run the first file with:
+```
+$ sudo chmod +x minikube1.sh && ./minikube1.sh
+```
+
+Restart session
+
+### Run the second file with:
+
+```
+$ sudo chmod +x minikube2.sh && ./minikube2.sh
+```
+
+### Configure AWS
+```
+$ aws configure
+```
+
+### Authenticate to ECR and download images with:
+
+```
+aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 160256247964.dkr.ecr.us-east-2.amazonaws.com
 ```
 
 ### Run the third file with:
