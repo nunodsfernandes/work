@@ -119,9 +119,16 @@ echo ""
 
 
 
-### Run the first file with:
+### Make the files executable
 ```
-$ sudo chmod +x minikube1.sh && ./minikube1.sh
+$ sudo chmod +x minikube1.sh minikube2.sh minikube3.sh 
+```
+
+
+### Run the first file with:
+ 
+```
+$ ./minikube1.sh
 ```
 
 Restart session
@@ -129,7 +136,7 @@ Restart session
 ### Run the second file with:
 
 ```
-$ sudo chmod +x minikube2.sh && ./minikube2.sh
+$ ./minikube2.sh
 ```
 
 ### Configure AWS
@@ -146,6 +153,6 @@ aws ecr get-login-password --region us-east-2 | docker login --username AWS --pa
 ### Run the third file with:
 
 ```
-$ sudo chmod +x minikube3.sh && ./minikube3.sh
+$ ./minikube3.sh
 
 
