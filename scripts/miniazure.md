@@ -1,7 +1,7 @@
 Create files on the VM with the following:
 
 ```
-$ vi minikube1.sh
+vi minikube1.sh
 ```
 
 Contents:
@@ -42,7 +42,7 @@ sudo chmod -R 777 /var/lib/filebeat-data
 --------------------
 
 ```
-$ vi minikube2.sh
+vi minikube2.sh
 ```
 
 Contents:
@@ -65,7 +65,7 @@ sudo rm ~/.kube/config_fix
 
 
 ```
-$ vi minikube3.sh
+vi minikube3.sh
 ```
 
 Contents: 
@@ -121,27 +121,33 @@ echo ""
 
 ### Make the files executable
 ```
-$ sudo chmod +x minikube1.sh minikube2.sh minikube3.sh 
+sudo chmod +x minikube1.sh minikube2.sh minikube3.sh 
 ```
 
 
 ### Run the first file with:
  
 ```
-$ ./minikube1.sh
+./minikube1.sh
 ```
 
-Restart session
+### Restart session
+Restart session to re-evaluate Docker permissions to your user.
+```
+exit
+```
+Login again.
+
 
 ### Run the second file with:
 
 ```
-$ ./minikube2.sh
+./minikube2.sh
 ```
 
 ### Configure AWS
 ```
-$ aws configure
+aws configure
 ```
 
 ### Authenticate to ECR and download images with:
@@ -153,6 +159,7 @@ aws ecr get-login-password --region us-east-2 | docker login --username AWS --pa
 ### Run the third file with:
 
 ```
-$ ./minikube3.sh
+./minikube3.sh
+```
 
 
