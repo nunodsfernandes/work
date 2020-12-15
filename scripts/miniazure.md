@@ -54,10 +54,10 @@ sudo chown -R $USER $HOME/.kube $HOME/.minikube
 sudo chmod -R 444 $HOME/.minikube/profiles/minikube/client.key
 sudo chmod -R 444 $HOME/.minikube/profiles/minikube/client.crt
 sudo chmod -R 444 /home/centos/.minikube/ca.crt
-cp ~/.kube/config ~/.kube/config_backup
-sed 's+root+home/centos+g' ~/.kube/config > ~/.kube/config_fix
-cp ~/.kube/config_fix ~/.kube/config
-rm ~/.kube/config_fix
+sudo cp ~/.kube/config ~/.kube/config_backup
+sudo sed 's+root+home/centos+g' ~/.kube/config > ~/.kube/config_fix
+sudo cp ~/.kube/config_fix ~/.kube/config
+sudo rm ~/.kube/config_fix
 ```
 
 
@@ -119,7 +119,7 @@ docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/grok_exporter:latest
 
 kubectl create namespace eo
 kubectl create namespace monitoring
-mkdir eo-install
+sudo mkdir eo-install
 cd eo-install
 
 clear
