@@ -1,5 +1,8 @@
 # This is prepared for single machine that will be used as a single node.
-# Also, this MUST be run as root.
+#
+# WARNING: This script MUST be run as root.
+#
+#
 
 
 # Put SELinux in permissive mode and load br_netfilter
@@ -104,3 +107,131 @@ chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 kubectl taint nodes --all node-role.kubernetes.io/master-
 
+
+# Prepare the volumes for the EO deployment using local storage on the master node
+mkdir -p /data/eo-pv1
+mkdir -p /data/eo-pv2
+mkdir -p /data/eo-pv3
+mkdir -p /data/eo-pv4
+mkdir -p /data/eo-pv5
+mkdir -p /data/eo-pv6
+
+chmod 777 /data/eo-pv1
+chmod 777 /data/eo-pv2
+chmod 777 /data/eo-pv3
+chmod 777 /data/eo-pv4
+chmod 777 /data/eo-pv6
+
+
+# Create the persistent volume yaml file
+mkdir eo-install
+cat <<EOF | sudo tee pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: eo-persistent-volume-1
+spec:
+  storageClassName: manual
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/eo-pv1/"
+    
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: eo-persistent-volume-2
+spec:
+  storageClassName: manual
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/eo-pv2/"    
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: eo-persistent-volume-3
+spec:
+  storageClassName: manual
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/eo-pv3/"
+    
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: eo-persistent-volume-4
+spec:
+  storageClassName: manual
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/eo-pv4/"
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: eo-persistent-volume-5
+spec:
+  storageClassName: manual
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/eo-pv5/"
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: eo-persistent-volume-6
+spec:
+  storageClassName: manual
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/eo-pv6/"
+
+EOF
+
+# Apply the configuration to the cluster
+kubectl apply -f pv.yaml
+
+# Provide the cluster data to the engineer
+clear
+
+echo "Cluster is ready!"
+echo ""
+echo "These are the pods running:"
+kubectl get pods -A
+
+echo "These are the persistent volumes available (10GB each):"
+kubectl get pvc
