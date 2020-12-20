@@ -1,14 +1,12 @@
-#!/bin/bash
-
-# This is prepared for a Centos 7 machine that will be used as a Master Node.
-# Prepare environment
+# This is prepared for single machine that will be used as a single node.
+# Also, this MUST be run as root.
 
 
 # Put SELinux in permissive mode and load br_netfilter
- sed -i 's|SELINUX=enforcing|SELINUX=disabled|g' /etc/selinux/config
- setenforce 0
- sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
- modprobe br_netfilter
+sed -i 's|SELINUX=enforcing|SELINUX=disabled|g' /etc/selinux/config
+setenforce 0
+sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+modprobe br_netfilter
 
 
 # Disable swap and comment it out on fstab
@@ -17,26 +15,27 @@ sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
 
 # Create proper hosts file for the aliases
- cat <<EOF >  /etc/hosts
+cat <<EOF >  /etc/hosts
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
 EOF
 
 
 # Disable FW and prep net bridge iptable configuration
- service firewalld stop
- systemctl stop firewalld
- systemctl disable firewalld
- echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+service firewalld stop
+systemctl stop firewalld
+systemctl disable firewalld
+echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
 cat <<EOF >  /etc/sysctl.d/kube.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 EOF
- sysctl --system
+
+sysctl --system
 
 
 # Install and start components and services, Docker, Kubeadm and others
- cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
 baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
@@ -48,28 +47,24 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
 EOF
 
 
-# REMOVED FOR Docker CE TESTS - Standard Docker Install
-#  curl -fsSL https://get.docker.com/ | sh
-#  usermod -aG docker $(whoami)
-#  systemctl start docker kubelet && systemctl enable docker kubelet
-#  systemctl start docker && systemctl enable docker
-
+# Install Tools
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+systemctl enable --now kubelet
+systemctl daemon-reload
+systemctl restart kubelet
 
 # (Install Docker CE)
-sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+yum install -y yum-utils device-mapper-persistent-data lvm2
 
 # Add the Docker repository
-sudo yum-config-manager --add-repo \
-  https://download.docker.com/linux/centos/docker-ce.repo
-  
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
 # Install Docker CE
-sudo yum update -y && sudo yum install -y \
-  containerd.io-1.2.13 \
-  docker-ce-19.03.11 \
-  docker-ce-cli-19.03.11
-  
+yum update -y && yum install -y containerd.io docker-ce docker-ce-cli
+
+
 ## Create /etc/docker
-sudo mkdir /etc/docker
+mkdir /etc/docker
 
 # Set up the Docker daemon
 cat <<EOF | sudo tee /etc/docker/daemon.json
@@ -87,32 +82,25 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 EOF
 
 # Create /etc/systemd/system/docker.service.d
-sudo mkdir -p /etc/systemd/system/docker.service.d
+mkdir -p /etc/systemd/system/docker.service.d
+
 
 # Restart Docker
-sudo systemctl daemon-reload
-sudo systemctl restart docker
-sudo systemctl enable docker
+systemctl start docker && systemctl enable docker
+usermod -aG docker $(whoami)
+systemctl daemon-reload
+systemctl restart docker
+
 
 # Pre-pull the images for kubeadm and init the cluster
- kubeadm config images pull
- kubeadm init --pod-network-cidr=10.244.0.0/16 -v=9
- mkdir -p $HOME/.kube
- cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
- chown $(id -u):$(id -g) $HOME/.kube/config
+kubeadm config images pull
+kubeadm init --pod-network-cidr=10.244.0.0/16 -v=9
+mkdir -p $HOME/.kube
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+chown $(id -u):$(id -g) $HOME/.kube/config
 
 
 #Deploy the CNI (Flannel)
- kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
- kubectl taint nodes --all node-role.kubernetes.io/master-
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+kubectl taint nodes --all node-role.kubernetes.io/master-
 
-
-# Create the NFS Storage Controller on the master node
-# mkdir -p /srv/nfs/kubedata
-# adduser nfsnobody
-# chown nfsnobody: /srv/nfs/kubedata
-# yum install nfs-utils -y
-# systemctl enable nfs-server
-# systemctl start nfs-server
-# echo /srv/nfs/kubedata *(rw,sync,no_subtree_check,no_root_squash,no_all_squash,insecure) >> /etc/exports
-# exportfs -rav
