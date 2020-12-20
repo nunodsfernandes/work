@@ -108,13 +108,11 @@ sudo systemctl enable docker
 
 
 # Create the NFS Storage Controller on the master node
- mkdir -p /srv/nfs/kubedata
- adduser nfsnobody
- chown nfsnobody: /srv/nfs/kubedata
- yum install nfs-utils -y
- systemctl enable nfs-server
- systemctl start nfs-server
- echo /srv/nfs/kubedata *(rw,sync,no_subtree_check,no_root_squash,no_all_squash,insecure) >> /etc/exports
- exportfs -rav
-
-clear
+# mkdir -p /srv/nfs/kubedata
+# adduser nfsnobody
+# chown nfsnobody: /srv/nfs/kubedata
+# yum install nfs-utils -y
+# systemctl enable nfs-server
+# systemctl start nfs-server
+# echo /srv/nfs/kubedata *(rw,sync,no_subtree_check,no_root_squash,no_all_squash,insecure) >> /etc/exports
+# exportfs -rav
