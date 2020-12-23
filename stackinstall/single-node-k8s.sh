@@ -1,8 +1,13 @@
-# This is prepared for single machine that will be used as a single node.
 #
 # WARNING: This script MUST be run as root.
 #
+# This is prepared for single machine that will be used as a single node.
+# Also, this is an ongoing work.
 #
+
+
+# Update and install basic components
+yum update -y
 
 
 # Put SELinux in permissive mode and load br_netfilter
