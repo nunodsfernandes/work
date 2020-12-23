@@ -247,23 +247,10 @@ kubectl apply -f pv.yaml
 # Provide the cluster data to the engineer
 clear
 
-countdown() {
-        msg="Waiting for pod status update. Please hold.. ${1}..."
-        clear
-        tput cup $row $col
-        echo -n "$msg"
-        l=${#msg}
-        l=$(( l+$col ))
-        for i in {30..1}
-        do
-                tput cup $row $l
-                echo -n "$i"
-                sleep 1
-        done
-}
-
+read -t 60 -p "Holding 60 seconds for pod updates ..."
 
 clear
+
 echo "Setup is complete!"
 echo ""
 echo "These are the pods running:"
@@ -271,4 +258,3 @@ kubectl get pods -A
 
 echo "These are the persistent volumes available (10GB each):"
 kubectl get pv -A
-
