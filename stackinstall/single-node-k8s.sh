@@ -8,21 +8,27 @@
 
 # Update and install basic components
 yum update -y
+yum install -y yum-utils device-mapper-persistent-data lvm2
 
 
 # Put SELinux in permissive mode and load br_netfilter
 sed -i 's|SELINUX=enforcing|SELINUX=disabled|g' /etc/selinux/config
+
 setenforce 0
+
 sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+
 modprobe br_netfilter
 
 
 # Disable swap and comment it out on fstab
 swapoff -a
+
 sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
 
 # Create proper hosts file for the aliases
+
 cat <<EOF >  /etc/hosts
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
@@ -30,7 +36,6 @@ EOF
 
 
 # Disable FW and prep net bridge iptable configuration
-service firewalld stop
 systemctl stop firewalld
 systemctl disable firewalld
 echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
@@ -41,6 +46,7 @@ EOF
 
 sysctl --system
 
+sleep 3
 
 # Install and start components and services, Docker, Kubeadm and others
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
@@ -54,15 +60,23 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
         https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 EOF
 
+# refresh repos
+yum update -y
+
 
 # Install Tools
+
 yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
-systemctl enable --now kubelet
+
+sleep 5
+
+systemctl enable kubelet
+systemctl start kubelet
 systemctl daemon-reload
 systemctl restart kubelet
 
-# (Install Docker CE)
-yum install -y yum-utils device-mapper-persistent-data lvm2
+# refresh repos
+yum update -y
 
 # Add the Docker repository
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
@@ -240,3 +254,4 @@ kubectl get pods -A
 
 echo "These are the persistent volumes available (10GB each):"
 kubectl get pv -A
+
