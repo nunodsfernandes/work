@@ -239,4 +239,4 @@ echo "These are the pods running:"
 kubectl get pods -A
 
 echo "These are the persistent volumes available (10GB each):"
-kubectl get pvc
+kubectl get pv -A
