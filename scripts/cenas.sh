@@ -1,16 +1,16 @@
 #!/bin/bash
 
-docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/eo-core:1.0.4
+docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/eo-core:1.0.5
 
-docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/eo-ui-frontend:1.0.4
+docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/eo-ui-frontend:1.0.5
 
-docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/eo-ui-backend:1.0.4
+docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/eo-ui-backend:1.0.5
 
-docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/sd-ui:3.4.1
+docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/sd-ui:3.4.2
 
-docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/sd-ui-plugin:3.4.1
+docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/sd-ui-plugin:3.4.2
 
-docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/eo-kc-init:1.0.4
+docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/eo-kc-init:1.0.5
 
 docker pull 160256247964.dkr.ecr.us-east-2.amazonaws.com/grok_exporter:latest
 
