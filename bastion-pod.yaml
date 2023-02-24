@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ops-bastion
+spec:
+  selector:
+    matchLabels:
+      app: ops-bastion
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ops-bastion
+    spec:
+      containers:
+      - name: ops-bastion
+        image: ndsfernandes/ops-minimal:latest
